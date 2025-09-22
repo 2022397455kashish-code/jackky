@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>For You — With Dekhha Tenu Music</title>
+  <style>
+    /* Global Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      overflow-x: hidden;
+      transition: background 1s ease;
+    }
+    
+    /* Page container and navigation */
+    .pages-container {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .page {
+      width: 100%;
+      height: 100vh;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.8s ease, visibility 0.8s;
+    }
+    
+    .page.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .navigation {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 1rem;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0.8rem 1.5rem;
+      border-radius: 50px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .nav-btn {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #ccc;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .nav-btn.active {
+      background: #ff6b81;
+      transform: scale(1.3);
+    }
+    
+    /* Page 1 Styles - Soft Pink Theme */
+    .page-1 {
+      background: linear-gradient(135deg, #ffe8e8 0%, #f8d7ff 100%);
+      color: #7c5295;
+    }
+    
+    .page-1 .content {
+      max-width: 800px;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .page-1 h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1rem;
+      color: #ff6b81;
+    }
+    
+    .page-1 p {
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    /* Page 2 Styles - Soft Blue Theme */
+    .page-2 {
+      background: linear-gradient(135deg, #e6f0ff 0%, #c8e8ff 100%);
+      color: #3a6b8a;
+    }
+    
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      max-width: 1000px;
+      margin-top: 2rem;
+    }
+    
+    .gallery-item {
+      position: relative;
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      height: 250px;
+    }
+    
+    .gallery-item img, .gallery-item video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    
+    .gallery-item:hover img, .gallery-item:hover video {
+      transform: scale(1.05);
+    }
+    
+    .caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 1rem;
+      backdrop-filter: blur(5px);
+      transform: translateY(100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .gallery-item:hover .caption {
+      transform: translateY(0);
+    }
+    
+    /* Page 3 Styles - Soft Green Theme */
+    .page-3 {
+      background: linear-gradient(135deg, #e8ffe8 0%, #d4f5d4 100%);
+      color: #4a8c6d;
+    }
+    
+    .message-container {
+      max-width: 700px;
+      text-align: center;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.7);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    }
+    
+    .message-container h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: #4a8c6d;
+    }
+    
+    .message {
+      font-size: 1.3rem;
+      line-height: 1.8;
+      margin-bottom: 2rem;
+    }
+    
+    /* Music Player */
+    .music-player {
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0.7rem 1rem;
+      border-radius: 50px;
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .music-btn {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: #ff6b81;
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.3s ease;
+    }
+    
+    .music-btn:hover {
+      transform: scale(1.1);
+      background: #ff4d6d;
+    }
+    
+    .song-name {
+      font-size: 0.9rem;
+      font-weight: 500;
+      max-width: 150px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    /* Puppy Element */
+    .puppy {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 90;
+      width: 80px;
+      height: 80px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M35,40 Q50,20 65,40 Q75,50 65,60 Q50,80 35,60 Q25,50 35,40' fill='%23f4a261'/%3E%3Ccircle cx='40' cy='35' r='5' fill='black'/%3E%3Ccircle cx='60' cy='35' r='5' fill='black'/%3E%3Cpath d='M48,45 Q50,50 52,45' stroke='black' fill='transparent'/%3E%3Cpath d='M25,30 Q15,25 10,35 Q5,50 15,60' fill='%23f4a261'/%3E%3Cpath d='M75,30 Q85,25 90,35 Q95,50 85,60' fill='%23f4a261'/%3E%3Cpath d='M30,75 Q35,85 50,87 Q65,85 70,75 L65,90 Q50,95 35,90 L30,75' fill='%23f4a261'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      animation: bounce 2s infinite alternate;
+    }
+    
+    @keyframes bounce {
+      from { transform: translateY(0); }
+      to { transform: translateY(-10px); }
+    }
+    
+    /* Hearts Animation */
+    .hearts {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 10;
+    }
+    
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23ff6b81' d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'/%3E%3C/svg%3E");
+      background-size: contain;
+      opacity: 0;
+    }
+    
+    /* Song Info Box */
+    .song-info {
+      position: fixed;
+      bottom: 100px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px 15px;
+      border-radius: 10px;
+      backdrop-filter: blur(5px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      z-index: 90;
+      max-width: 250px;
+    }
+    
+    .song-info h3 {
+      font-size: 1rem;
+      margin-bottom: 5px;
+      color: #ff6b81;
+    }
+    
+    .song-info p {
+      font-size: 0.8rem;
+      color: #666;
+    }
+    
+    /* Progress Bar */
+    .progress-container {
+      position: fixed;
+      bottom: 180px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 100;
+      backdrop-filter: blur(5px);
+    }
+    
+    .progress {
+      height: 100%;
+      background: linear-gradient(to right, #ff6b81, #ff9aa2);
+      border-radius: 10px;
+      width: 0%;
+      transition: width 0.1s ease;
+    }
+    
+    /* Time Display */
+    .time-display {
+      position: fixed;
+      bottom: 160px;
+      width: 100%;
+      text-align: center;
+      color: #666;
+      font-size: 0.8rem;
+      z-index: 100;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .gallery {
+        grid-template-columns: 1fr;
+      }
+      
+      .page-1 h1 {
+        font-size: 2.5rem;
+      }
+      
+      .message-container h2 {
+        font-size: 2rem;
+      }
+      
+      .music-player {
+        top: auto;
+        bottom: 100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 90%;
+        max-width: 300px;
+      }
+      
+      .song-info {
+        bottom: 180px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        text-align: center;
+      }
+      
+      .progress-container {
+        width: 80%;
+        bottom: 200px;
+      }
+      
+      .puppy {
+        bottom: 250px;
+        right: 20px;
+        width: 60px;
+        height: 60px;
+      }
+    }
+    
+    /* Heart animation keyframes */
+    @keyframes float {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 0.8;
+      }
+      100% {
+        transform: translateY(-100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="pages-container">
+    <!-- Page 1: Text and Music -->
+    <div class="page page-1 active">
+      <div class="content">
+        <h1>For You, My Dear</h1>
+        <p>This is a collection of memories, thoughts, and feelings that I wanted to share with you.</p>
+        <p>Every moment with you is special, and I've created this little space to celebrate what we have.</p>
+        <p>Scroll through the pages, listen to "Dekhha Tenu", and know that each element was chosen with you in mind.</p>
+        <p>I hope this brings a smile to your face, just like you bring to mine every day.</p>
+      </div>
+    </div>
+    
+    <!-- Page 2: Gallery with Images and Videos -->
+    <div class="page page-2">
+      <h2>Our Memories Together</h2>
+      <div class="gallery">
+        <div class="gallery-item">
+          <img src="image 1.jpg" alt="Memory 1">
+          <div class="caption">That day at the beach when we watched the sunset</div>
+        </div>
+        <div class="gallery-item">
+          <img src="image 2.jpg" alt="Memory 2">
+          <div class="caption">Our first adventure together in the mountains</div>
+        </div>
+        <div class="gallery-item">
+          <img src="image 3.jpg" alt="Memory 3">
+          <div class="caption">That funny moment we still laugh about</div>
+        </div>
+        <div class="gallery-item">
+          <img src="image 4.jpg" alt="Memory 4">
+          <div class="caption">Celebrating your birthday last year</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Page 3: Final Message -->
+    <div class="page page-3">
+      <div class="message-container">
+        <h2>A Message Just For You</h2>
+        <div class="message">
+          <p>I wanted to create something that shows how much you mean to me.</p>
+          <p>Every day with you is a gift, and I cherish all our moments together—the laughs, the quiet times, even the challenges we've faced.</p>
+          <p>You make my world brighter just by being in it, and I'm grateful for you every single day.</p>
+          <p>Wherever life takes us, I hope we'll always find our way back to each other.</p>
+          <p>With all my love,</p>
+          <p style="margin-top: 1rem; font-weight: bold;">[Your Name]</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Navigation Dots -->
+  <div class="navigation">
+    <div class="nav-btn active" data-page="0"></div>
+    <div class="nav-btn" data-page="1"></div>
+    <div class="nav-btn" data-page="2"></div>
+  </div>
+  
+  <!-- Music Player -->
+  <div class="music-player">
+    <button class="music-btn" id="playBtn">▶</button>
+    <div class="song-name">Dekhha Tenu - Mr. Sher</div>
+  </div>
+  
+  <!-- Progress Bar -->
+  <div class="progress-container" id="progress-container">
+    <div class="progress" id="progress"></div>
+  </div>
+  
+  <!-- Time Display -->
+  <div class="time-display">
+    <span id="current-time">0:00</span> / <span id="duration">0:00</span>
+  </div>
+  
+  <!-- Song Information -->
+  <div class="song-info">
+    <h3>Now Playing</h3>
+    <p>Dekhha Tenu</p>
+    <p>Mr. Sher</p>
+  </div>
+  
+  <!-- Cute Puppy -->
+  <div class="puppy"></div>
+  
+  <!-- Hearts Container -->
+  <div class="hearts"></div>
+  
+  <!-- Audio Element for the Song -->
+  <audio id="mainMusic">
+    <!-- Using a sample song since we can't access local files in this environment -->
+    <!-- Replace with your downloaded "Dekhha Tenu" MP3 file -->
+  <source src="dekha-tenu.mp3" type="audio/mpeg">
+  </audio>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Page navigation
+      const pages = document.querySelectorAll('.page');
+      const navBtns = document.querySelectorAll('.nav-btn');
+      const playBtn = document.getElementById('playBtn');
+      const songName = document.querySelector('.song-name');
+      
+      // Audio element for the song
+      const mainMusic = document.getElementById('mainMusic');
+      const progress = document.getElementById('progress');
+      const progressContainer = document.getElementById('progress-container');
+      const currentTimeEl = document.getElementById('current-time');
+      const durationEl = document.getElementById('duration');
+      
+      // Set the start and end time for the song (if you want a specific segment)
+      mainMusic.addEventListener('loadedmetadata', function() {
+        // If you want to start at a specific time (e.g., 30 seconds)
+        // mainMusic.currentTime = 30;
+        
+        // Format and display duration
+        const duration = mainMusic.duration;
+        durationEl.textContent = formatTime(duration);
+      });
+      
+      // If you want to loop a specific segment, uncomment and adjust these values
+      /*
+      mainMusic.addEventListener('timeupdate', function() {
+        if (mainMusic.currentTime >= 85) { // End time in seconds
+          mainMusic.currentTime = 16; // Start time in seconds
+        }
+      });
+      */
+        
+      // Update progress bar
+      mainMusic.addEventListener('timeupdate', function() {
+        const progressPercent = (mainMusic.currentTime / mainMusic.duration) * 100;
+        progress.style.width = `${progressPercent}%`;
+        
+        // Update time display
+        currentTimeEl.textContent = formatTime(mainMusic.currentTime);
+      });
+      
+      // Click on progress bar to seek
+      progressContainer.addEventListener('click', function(e) {
+        const width = this.clientWidth;
+        const clickX = e.offsetX;
+        const duration = mainMusic.duration;
+        
+        mainMusic.currentTime = (clickX / width) * duration;
+      });
+      
+      // Format time in minutes:seconds
+      function formatTime(seconds) {
+        let mins = Math.floor(seconds / 60);
+        let secs = Math.floor(seconds % 60);
+        if (secs < 10) {
+          secs = `0${secs}`;
+        }
+        return `${mins}:${secs}`;
+      }
+      
+      // Current page index
+      let currentPage = 0;
+      
+      // Initialize page
+      function showPage(index) {
+        // Hide all pages
+        pages.forEach(page => page.classList.remove('active'));
+        
+        // Show selected page
+        pages[index].classList.add('active');
+        
+        // Update navigation
+        navBtns.forEach(btn => btn.classList.remove('active'));
+        navBtns[index].classList.add('active');
+        
+        // Update current page
+        currentPage = index;
+      }
+      
+      // Navigation button clicks
+      navBtns.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          showPage(index);
+        });
+      });
+      
+      // Music control
+      playBtn.addEventListener('click', function() {
+        if (mainMusic.paused) {
+          // Play music
+          mainMusic.play();
+          this.innerHTML = '❚❚';
+          this.classList.remove('paused');
+        } else {
+          // Pause music
+          mainMusic.pause();
+          this.innerHTML = '▶';
+          this.classList.add('paused');
+        }
+      });
+      
+      // Create floating hearts
+      function createHearts() {
+        const heartsContainer = document.querySelector('.hearts');
+        
+        setInterval(() => {
+          const heart = document.createElement('div');
+          heart.classList.add('heart');
+          
+          // Random position
+          heart.style.left = Math.random() * 100 + 'vw';
+          heart.style.top = '100vh';
+          
+          // Random size
+          const size = 10 + Math.random() * 20;
+          heart.style.width = size + 'px';
+          heart.style.height = size + 'px';
+          
+          // Random animation duration
+          const duration = 3 + Math.random() * 5;
+          
+          // Apply animation
+          heart.style.animation = `float ${duration}s linear forwards`;
+          
+          heartsContainer.appendChild(heart);
+          
+          // Remove heart after animation completes
+          setTimeout(() => {
+            heart.remove();
+          }, duration * 1000);
+        }, 300);
+      }
+      
+      // Initialize
+      createHearts();
+      
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight') {
+          showPage((currentPage + 1) % pages.length);
+        } else if (e.key === 'ArrowLeft') {
+          showPage((currentPage - 1 + pages.length) % pages.length);
+        }
+      });
+      
+      // Swipe support for mobile
+      let touchStartX = 0;
+      document.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      });
+      
+      document.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchEndX - touchStartX;
+        
+        if (Math.abs(diff) > 50) { // Minimum swipe distance
+          if (diff > 0) {
+            // Swipe right - previous page
+            showPage((currentPage - 1 + pages.length) % pages.length);
+          } else {
+            // Swipe left - next page
+            showPage((currentPage + 1) % pages.length);
+          }
+        }
+      });
+      
+      // Auto-play music on page load (with user interaction requirement)
+      document.body.addEventListener('click', function initPlay() {
+        // Try to play music
+        mainMusic.play().then(() => {
+          playBtn.innerHTML = '❚❚';
+          playBtn.classList.remove('paused');
+        }).catch(e => {
+          console.log('Auto-play prevented:', e);
+        });
+        
+        // Remove this listener after first interaction
+        document.body.removeEventListener('click', initPlay);
+      }, { once: true });
+    });
+  </script>
+</body>
+</html>
